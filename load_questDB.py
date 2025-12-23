@@ -50,6 +50,9 @@ class DataOps:
         target_fs = target_fs if target_fs is not None else fs
         target_filter_freq = filter_fs if filter_fs is not None else target_fs / 2 - 1
 
+        # linear interpolation to fill missing data
+        df = df.set_index("time").interpolate(method="time").reset_index()
+
         # ------------------------------------------------------------------
         # 1. Create uniform time grid at original fs
         # ------------------------------------------------------------------
