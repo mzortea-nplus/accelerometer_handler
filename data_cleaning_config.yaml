@@ -1,0 +1,14 @@
+frequency:
+  target_fs: 100
+  filter_f: 90
+
+fourier:
+  nperseg: 4096
+
+date:
+  start_date: "2025-03-01"
+  end_date: "2025-03-02"
+
+path:
+  data_path: "data/12001006920/acc"
+  output_path: "data/output/"
