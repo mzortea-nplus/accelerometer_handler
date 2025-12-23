@@ -7,12 +7,6 @@ from scipy import signal
 import numpy as np
 from matplotlib import pyplot as plt
 from scipy.signal import ShortTimeFFT as STFT
-from scipy.fft import fft, fftfreq
-import yaml
-import sys
-
-SRC_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-sys.path.append(os.path.dirname(SRC_DIR))
 
 
 class DataOps:
@@ -107,7 +101,7 @@ class DataOps:
 
         print("Data processed with:")
         print("\t - sampling freq:", fs)
-        print("\t - filter freq:", config["frequency"]["filter_f"])
+        print("\t - filter freq:", target_filter_freq)
 
         return out
 
@@ -144,7 +138,7 @@ class DataOps:
         start_date=pd.to_datetime("2025-03-01"),
         end_date=pd.to_datetime("2025-03-02"),
     ):
-        print("Loading data from:", config["path"]["data_path"])
+        print("Loading data from:", path)
         full_df = pd.DataFrame()
         for f in os.listdir(path):
             file_path = os.path.join(path, f)
@@ -179,35 +173,3 @@ class DataOps:
         print("\t - n. sensors:", len(df.columns) - 1)
         print("\t - missing values:", df.isna().sum().sum())
         return full_df
-
-
-#### NOTE: WE SHOULD CHECK FOR MEMORY USAGE WHEN LOADING LARGE DATASETS ####
-#### NOTE: WE SHOULD CHECK FOR HOLES IN THE TIME SERIES DATA BEFORE RESAMPLING ####
-
-if __name__ == "__main__":
-
-    with open("src/data_cleaning_config.yaml", "r") as f:
-        config = yaml.safe_load(f)
-
-    operator = DataOps()
-    df = operator.read_files(
-        config["path"]["data_path"],
-        phm_list=None,
-        start_date=datetime.strptime(config["date"]["start_date"], "%Y-%m-%d"),
-        end_date=datetime.strptime(config["date"]["end_date"], "%Y-%m-%d"),
-    )
-
-    df_segments = operator.split_segments(df, min_segment_length_minutes=15)
-
-    for i in range(len(df_segments)):
-
-        df = operator.data_preprocessing(
-            df=df_segments[i],
-            base_fs=operator.get_avg_fs(df_segments[i]),
-            filter_fs=config["frequency"]["filter_f"],
-            target_fs=config["frequency"]["target_fs"],
-        )
-
-        operator.from_df_to_questdb(
-            df, table_name="processed_data", addr=config["questdb"]["addr"]
-        )
