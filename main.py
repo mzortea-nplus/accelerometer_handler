@@ -1,6 +1,6 @@
 import yaml
 from datetime import datetime
-from data_handling import DataOps
+from data_handling import DataOps, AccelerometerDataOps
 
 #### NOTE: WE SHOULD CHECK FOR MEMORY USAGE WHEN LOADING LARGE DATASETS ####
 #### NOTE: WE SHOULD CHECK FOR HOLES IN THE TIME SERIES DATA BEFORE RESAMPLING ####
@@ -10,13 +10,15 @@ if __name__ == "__main__":
     with open("src/data_cleaning_config.yaml", "r") as f:
         config = yaml.safe_load(f)
 
-    operator = DataOps()
+    operator = AccelerometerDataOps()
     df = operator.read_files(
         config["path"]["data_path"],
         phm_list=None,
         start_date=datetime.strptime(config["date"]["start_date"], "%Y-%m-%d"),
         end_date=datetime.strptime(config["date"]["end_date"], "%Y-%m-%d"),
     )
+
+    df = operator.basic_preprocessing(df)
 
     df_segments = operator.split_segments(df, min_segment_length_minutes=15)
 
