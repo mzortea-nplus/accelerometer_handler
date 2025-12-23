@@ -12,3 +12,6 @@ date:
 path:
   data_path: "data/12001006920/acc"
   output_path: "data/output/"
+
+questdb:
+  addr: "http::addr=192.168.157.242:9000"

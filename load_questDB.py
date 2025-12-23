@@ -20,13 +20,8 @@ class DataOps:
         self.df = pd.DataFrame()
 
     @staticmethod
-    def from_df_to_questdb(
-        df,
-        table_name,
-        host="localhost",
-        port=9009,
-    ):
-        with Sender.from_conf(f"http::addr=192.168.157.242:9000") as sender:
+    def from_df_to_questdb(df, table_name, addr):
+        with Sender.from_conf(addr) as sender:
             sender.dataframe(df=df, table_name=table_name, at="time")
 
     @staticmethod
@@ -211,6 +206,5 @@ if __name__ == "__main__":
         )
 
         operator.from_df_to_questdb(
-            df,
-            table_name="processed_data",
+            df, table_name="processed_data", addr=config["questdb"]["addr"]
         )
