@@ -74,7 +74,7 @@ Data pre-processing and cleaning according to the following pipeline:
         )
 ```
 
-Send data to QuestDB
+Send data to QuestDB. Note that this function can be used for any type of data, not necessarily accelerometers.
 
 ```python
     for i in range(len(df_segments)):
